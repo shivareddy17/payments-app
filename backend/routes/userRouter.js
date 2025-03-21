@@ -43,6 +43,8 @@ router.post("/signup", async (req, res) => {
   res.json({
     msg: "user sucessfully signedup",
     token:token
-  });
+  });     
+
+  
 });
 module.exports = router;
