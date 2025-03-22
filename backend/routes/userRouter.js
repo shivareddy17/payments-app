@@ -47,4 +47,29 @@ router.post("/signup", async (req, res) => {
 
   
 });
+
+ const signinObj =zod.object({
+  userzod:zod.string().email(),
+  password:zod.string()
+ })
+router.post('/signin',async(req,res)=>{
+  const {safeBody}=signinObj.safeParse(req.body)
+
+  if(!safeBody){
+    res.json({
+      msg:"invalid inputs"
+    })
+  }
+
+  const user= User.findOne({username:req.body.username,password:req.body.password})
+
+  if(user){
+    const token=jwt.sign({id:user._id},JWT_SCRET)
+
+    res.json({
+      msg:"sucessfully signed in",
+      token:token
+    })
+  }
+})
 module.exports = router;
