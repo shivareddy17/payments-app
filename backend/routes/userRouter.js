@@ -5,6 +5,7 @@ const jwt=require('jsonwebtoken')
 const zod = require("zod");
 const JWT_SCRET=require('../config')
 const { User } = require("../db");
+const {userMiddleware}= require('../middleware')
 router.get("/", async (req, res) => {
   res.json({
     msg: "user end point from routes",
@@ -71,5 +72,28 @@ router.post('/signin',async(req,res)=>{
       token:token
     })
   }
+})
+
+const updatebody= zod.object({
+  password :zod.string(),
+  firstname:zod.string(),
+  lastname:zod.string()
+})
+router.put('/user',userMiddleware,async(req,res)=>{
+
+  const {safeBody}= updatebody.safeParse(req.body);
+
+  if(!safeBody){
+    res.json({
+      msg:"invalid parameters"
+    })
+  }
+   const user= User.updateOne({_id:req.id},req.body)
+
+   if(user){
+    res.json({
+      msg:"user sucessfully updated"
+    })
+   }
 })
 module.exports = router;
